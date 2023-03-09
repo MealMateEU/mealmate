@@ -10,11 +10,11 @@ const MyApp: AppType<{ session: Session | null }> = ({
   pageProps: { session, ...pageProps },
 }) => {
   return (
-    <Theme dataTheme='valentine'>
-      <SessionProvider session={session}>
+    <SessionProvider session={session}>
+      <Theme dataTheme="valentine">
         <Component {...pageProps} />
-      </SessionProvider>
-    </Theme>
+      </Theme>
+    </SessionProvider>
   );
 };
 
