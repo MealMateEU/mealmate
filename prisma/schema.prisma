@@ -57,9 +57,8 @@ model User {
     heightInCentimeters Int
     age                 Int
     objective           Objective
-    WeightHistory       WeightHistory[]
-    Mate                Mate[]
-    Mate                Mate[]
+    weightHistory       WeightHistory[]
+    mate                Mate[]
 }
 
 model VerificationToken {
