@@ -1,12 +1,11 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
     provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "sqlite"
+    provider = "mysql"
     // NOTE: When using postgresql, mysql or sqlserver, uncomment the @db.Text annotations in model Account below
     // Further reading:
     // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
@@ -14,10 +13,10 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-model Example {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+enum Objective {
+    LOSE_FAT
+    WEIGHT_GAIN
+    MAINTAIN_WEIGHT
 }
 
 // Necessary for Next auth
@@ -48,13 +47,19 @@ model Session {
 }
 
 model User {
-    id            String    @id @default(cuid())
-    name          String?
-    email         String?   @unique
-    emailVerified DateTime?
-    image         String?
-    accounts      Account[]
-    sessions      Session[]
+    id                  String          @id @default(cuid())
+    name                String?
+    email               String?         @unique
+    emailVerified       DateTime?
+    image               String?
+    accounts            Account[]
+    sessions            Session[]
+    heightInCentimeters Int
+    age                 Int
+    objective           Objective
+    WeightHistory       WeightHistory[]
+    Mate                Mate[]
+    Mate                Mate[]
 }
 
 model VerificationToken {
@@ -63,4 +68,37 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+// DB Schema
+model FoodItem {
+    id           String   @id @default(cuid())
+    api_id       String
+    blacklist_id String
+    created_at   DateTime @default(now())
+    updated_at   DateTime @updatedAt
+}
+
+model BlackList {
+    id         String   @id @default(cuid())
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
+}
+
+model WeightHistory {
+    id           String   @id @default(cuid())
+    userId       String
+    related_user User     @relation(fields: [userId], references: [id])
+    weight       Float
+    created_at   DateTime @default(now())
+    updated_at   DateTime @updatedAt
+}
+
+model Mate {
+    id           String   @id @default(cuid())
+    userId       String
+    related_user User     @relation(fields: [userId], references: [id])
+    level        Int
+    created_at   DateTime @default(now())
+    updated_at   DateTime @updatedAt
 }
