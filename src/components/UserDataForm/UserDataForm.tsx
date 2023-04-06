@@ -32,7 +32,10 @@ const UserDataForm: React.FC = () => {
 
   return (
     <form
-      onSubmit={void handleSubmit(onSubmit)}
+      onSubmit={(e) => {
+        e.preventDefault();
+        void handleSubmit(onSubmit)(e);
+      }}
       className="flex h-screen flex-col items-center justify-center space-y-4 p-4"
     >
       <Input
@@ -58,7 +61,7 @@ const UserDataForm: React.FC = () => {
       <Select
         register={register}
         name={UserInfosENUM.objective}
-        options={["LOSE_WEIGHT", "GAIN_MUSCLE", "MAINTAIN_WEIGHT"]}
+        options={["LOSE_FAT", "GAIN_MUSCLE", "MAINTAIN_WEIGHT"]}
         selectName="Pick one ?"
         required
       />

@@ -2,8 +2,8 @@ import { Objective } from "@prisma/client";
 import { z } from "zod";
 
 export const UserInfos = z.object({
-  age: z.number().min(0).max(150),
-  heightInCentimeters: z.number().min(0).max(250),
+  age: z.coerce.number().min(0).max(150),
+  heightInCentimeters: z.coerce.number().min(0).max(250),
   objective: z.nativeEnum(Objective),
 });
 
