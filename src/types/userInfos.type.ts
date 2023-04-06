@@ -1,9 +1,10 @@
+import { Objective } from "@prisma/client";
 import { z } from "zod";
 
 export const UserInfos = z.object({
   age: z.number().min(0).max(150),
   heightInCentimeters: z.number().min(0).max(250),
-  objective: z.enum(["LOSE_WEIGHT", "GAIN_MUSCLE", "MAINTAIN_WEIGHT"]),
+  objective: z.nativeEnum(Objective),
 });
 
 export enum UserInfosENUM {

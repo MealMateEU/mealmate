@@ -2,18 +2,11 @@ import { z } from "zod";
 
 import {
   createTRPCRouter,
-  publicProcedure,
   protectedProcedure,
 } from "~/server/api/trpc";
+import { UserInfos } from "~/types/userInfos.type";
 
 export const userRouter = createTRPCRouter({
-  hello: publicProcedure
-    .input(z.object({ text: z.string() }))
-    .query(({ input }) => {
-      return {
-        greeting: `Hello ${input.text}`,
-      };
-    }),
 
   getUserInfos: protectedProcedure.query(async ({ ctx }) => {
     const allDatas = await ctx.prisma.user.findMany();
@@ -22,7 +15,19 @@ export const userRouter = createTRPCRouter({
     return result;
   }),
 
-  getSecretMessage: protectedProcedure.query(() => {
-    return "you can now see this secret message!";
+  addUserInfos: protectedProcedure.input((UserInfos)
+  ).mutation(async ({ ctx, input }) => {
+    const userId = ctx.session.user.id;
+    const data = await ctx.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (data) {
+      const updatedUser = await ctx.prisma.user.update({
+        where: { id: userId },
+        data: input,
+      });
+      return updatedUser;
+    }
   }),
 });

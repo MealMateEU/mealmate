@@ -8,6 +8,7 @@ import {
   type UserInfosType,
 } from "~/types/userInfos.type";
 import Image from "next/image";
+import { api } from "~/utils/api";
 
 const UserDataForm: React.FC = () => {
   const {
@@ -19,8 +20,14 @@ const UserDataForm: React.FC = () => {
     resolver: zodResolver(UserInfos),
   });
 
+  const { mutate: addUserInfos } = api.user.addUserInfos.useMutation({
+    onSuccess: (data) => {
+      console.log(data);
+    },
+  });
+
   const onSubmit: SubmitHandler<UserInfosType> = (data) => {
-    console.log(data);
+    addUserInfos(data);
   };
 
   return (
@@ -58,7 +65,13 @@ const UserDataForm: React.FC = () => {
       {errors.objective && (
         <p className="text-red-500">{errors.objective.message}</p>
       )}
-      <input type="submit" />
+      <button type="submit">Submit</button>
+      <Image
+        src="https://media.tenor.com/hSL--HaaLEMAAAAC/hello-pikachu.gif"
+        alt="welcome"
+        width={500}
+        height={500}
+      />
     </form>
   );
 };
