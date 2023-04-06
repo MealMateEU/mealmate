@@ -1,6 +1,7 @@
 import { type NextPage } from "next";
 import { signIn, useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Button } from "~/components/common/Button";
 import UserDataForm from "~/components/UserDataForm/UserDataForm";
@@ -18,6 +19,7 @@ function LoginForm() {
 
 const AuthPage: NextPage = () => {
   const userLoggedIn = useSession().status === "authenticated";
+  const router = useRouter();
   const [isNewUser, setIsNewUser] = useState(false);
   const { data } = api.user.getUserInfos.useQuery();
 
@@ -32,8 +34,7 @@ const AuthPage: NextPage = () => {
         setIsNewUser(true);
         console.log(data.name, "-> Is a new user");
       } else {
-        // redirect to home if user is not new
-        redirect("/");
+        void router.push("/");
       }
     }
   }, [data]);

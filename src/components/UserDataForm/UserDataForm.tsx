@@ -9,8 +9,15 @@ import {
 } from "~/types/userInfos.type";
 import Image from "next/image";
 import { api } from "~/utils/api";
+import { useRouter } from "next/router";
 
 const UserDataForm: React.FC = () => {
+  const router = useRouter();
+
+  function redirect() {
+    void router.push("/");
+  }
+
   const {
     register,
     watch,
@@ -22,7 +29,7 @@ const UserDataForm: React.FC = () => {
 
   const { mutate: addUserInfos } = api.user.addUserInfos.useMutation({
     onSuccess: (data) => {
-      console.log(data);
+      redirect();
     },
   });
 
