@@ -10,10 +10,11 @@ on:
   workflow_dispatch:
 
 env:
-  DATABASE_URL: "mysql://fakeuser:fakepass@fakehost:3306/fakedb"
-  MAIL_POOLURL: "smtp://noreply@educational-toolbox.com:fakepass@fakehost/?pool=true"
-  MAIL_FROM: "ci@educational-toolbox.com"
-  JWT_SECRET: "CI_JWT_SECRET"
+  NEXTAUTH_SECRET "",
+  NEXTAUTH_URL: "",
+  DISCORD_CLIENT_ID: "",
+  NEXTAUTH_SECRET: "",
+  DISCORD_CLIENT_SECRET: ""
 
 jobs:
   lint:
