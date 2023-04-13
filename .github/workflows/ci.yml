@@ -10,10 +10,11 @@ on:
   workflow_dispatch:
 
 env:
-  NEXTAUTH_SECRET: ""
-  NEXTAUTH_URL: ""
-  DISCORD_CLIENT_ID: ""
-  DISCORD_CLIENT_SECRET: ""
+  DATABASE_URL: "mysql://fake:fake@fake/fake"
+  NEXTAUTH_SECRET: "fake"
+  NEXTAUTH_URL: "http://fake.com"
+  DISCORD_CLIENT_ID: "fake"
+  DISCORD_CLIENT_SECRET: "fake"
 
 jobs:
   lint:
