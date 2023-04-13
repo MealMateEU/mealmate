@@ -13,9 +13,7 @@ function LoginForm() {
 }
 
 const AuthPage: NextPage = () => {
-  const data = "";
   return <LoginForm />;
-  ("");
 };
 
 export default AuthPage;
