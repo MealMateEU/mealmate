@@ -21,7 +21,7 @@ const useOffline = () => {
     };
   }, [toOffline, toOnline]);
 
-  return onlineStatus;
+  return !onlineStatus;
 };
 
 export default useOffline;
