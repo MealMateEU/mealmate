@@ -1,6 +1,5 @@
 import { type NextPage } from "next";
 import { signIn, useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Button } from "~/components/common/Button";
@@ -37,7 +36,7 @@ const AuthPage: NextPage = () => {
         void router.push("/");
       }
     }
-  }, [data]);
+  }, [data, router]);
 
   // return part
   if (!userLoggedIn) return <LoginForm />;
