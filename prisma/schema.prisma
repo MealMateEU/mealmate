@@ -15,7 +15,7 @@ datasource db {
 
 enum Objective {
     LOSE_FAT
-    WEIGHT_GAIN
+    GAIN_MUSCLE
     MAINTAIN_WEIGHT
     UNSET
 }
