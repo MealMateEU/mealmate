@@ -4,6 +4,7 @@ import { SessionProvider } from "next-auth/react";
 import { api } from "~/utils/api";
 import "~/styles/globals.css";
 import { Theme } from "react-daisyui";
+import AppNavbar from "~/components/common/Navbar";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -13,6 +14,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
     <SessionProvider session={session}>
       <Theme dataTheme="valentine">
         <Component {...pageProps} />
+        <AppNavbar />
       </Theme>
     </SessionProvider>
   );
