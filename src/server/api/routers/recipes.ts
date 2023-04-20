@@ -6,6 +6,7 @@ export const recipesRouter = createTRPCRouter({
     return await getExternalRecipes({
       type: "public",
       excluded: ["chicken"],
+      calories: "600+",
     });
   }),
 });

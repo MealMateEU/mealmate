@@ -36,7 +36,9 @@ const RecipesPage: NextPage = () => {
               <b className="text-lg font-bold leading-tight">{recipe.label}</b>
               <div className="flex gap-1 overflow-x-auto">
                 {recipe.dietLabels.map((label) => (
-                  <Badge key={label}>{label}</Badge>
+                  <Badge size="xs" key={label}>
+                    {label}
+                  </Badge>
                 ))}
               </div>
               <a
