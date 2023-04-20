@@ -12,7 +12,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }) => {
   return (
     <SessionProvider session={session}>
-      <Theme dataTheme="valentine">
+      <Theme dataTheme="dark">
         <Component {...pageProps} />
         <AppNavbar />
       </Theme>
