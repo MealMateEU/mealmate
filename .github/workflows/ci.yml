@@ -15,6 +15,8 @@ env:
   NEXTAUTH_URL: "http://fake.com"
   DISCORD_CLIENT_ID: "fake"
   DISCORD_CLIENT_SECRET: "fake"
+  EDAMAM_APP_ID: "fake"
+  EDAMAM_API_KEY: "fake"
 
 jobs:
   lint:
