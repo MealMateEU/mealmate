@@ -10,7 +10,6 @@ import { BottomNavigation } from "react-daisyui";
 
 const AppNavbar = () => {
   const router = useRouter();
-  console.log(router.pathname);
   return (
     <BottomNavigation>
       <Link
