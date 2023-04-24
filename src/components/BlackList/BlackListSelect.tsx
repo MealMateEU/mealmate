@@ -36,7 +36,7 @@ const BlackListSelect: React.FC = () => {
       label: string;
     }>
   ) => {
-    if (e.length > data!.length || data.length === 0) {
+    if (e.length > data!.length || data!.length === 0) {
       const content = e.slice(-1)[0]?.value || "";
       if (content === "") return;
       createBlackListFood({ content: content });
