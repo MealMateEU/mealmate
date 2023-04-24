@@ -1,9 +1,4 @@
-import {
-  IconBook,
-  IconHome,
-  IconUserCircle,
-  IconYoga,
-} from "@tabler/icons-react";
+import { IconBook, IconUserCircle, IconYoga } from "@tabler/icons-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { BottomNavigation } from "react-daisyui";
@@ -15,13 +10,6 @@ const AppNavbar = () => {
       <Link
         href={{ pathname: "/" }}
         className={router.pathname === "/" ? "active" : undefined}
-      >
-        <IconHome />
-        <BottomNavigation.Label>Home</BottomNavigation.Label>
-      </Link>
-      <Link
-        href={{ pathname: "/mate" }}
-        className={router.pathname.includes("mate") ? "active" : undefined}
       >
         <IconYoga />
         <BottomNavigation.Label>Mate</BottomNavigation.Label>
