@@ -20,7 +20,6 @@ const UserDataForm: React.FC = () => {
 
   const {
     register,
-    watch,
     handleSubmit,
     formState: { errors },
   } = useForm<UserInfosType>({

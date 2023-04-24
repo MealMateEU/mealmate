@@ -21,6 +21,7 @@ const config = {
       "www.google.com",
       "media.tenor.com",
       "edamam-product-images.s3.amazonaws.com",
+      "cdn.discordapp.com",
     ],
   },
   i18n: {
