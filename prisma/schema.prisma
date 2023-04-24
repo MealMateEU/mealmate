@@ -60,6 +60,7 @@ model User {
     objective           Objective       @default(UNSET)
     weightHistory       WeightHistory[]
     mate                Mate[]
+    BlackList           BlackList[]
 }
 
 model VerificationToken {
@@ -80,9 +81,12 @@ model FoodItem {
 }
 
 model BlackList {
-    id         String   @id @default(cuid())
-    created_at DateTime @default(now())
-    updated_at DateTime @updatedAt
+    id           String   @id @default(cuid())
+    created_at   DateTime @default(now())
+    updated_at   DateTime @updatedAt
+    userId       String
+    related_user User     @relation(fields: [userId], references: [id])
+    food         String
 }
 
 model WeightHistory {
