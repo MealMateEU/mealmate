@@ -12,7 +12,7 @@ const Home: NextPage = () => {
     isError: userError,
   } = api.user.getUserInfos.useQuery();
 
-  const userId = userData?.id;
+  const userId = userData?.id || "";
 
   const {
     data: weightHistoryData,
@@ -20,27 +20,53 @@ const Home: NextPage = () => {
     isError: weightHistoryError,
   } = api.weightHistory.getWeightHistoryByUserId.useQuery(
     {
-      userId: userId || "",
+      userId: userId,
     },
     { enabled: !!userId }
   );
 
-  const isTodaysWeightHistoryCompleted = (weightHistory: WeightHistory[]) => {
+  const {
+    data: mateData,
+    isLoading: mateLoading,
+    isError: mateError,
+  } = api.mate.getMateByUserId.useQuery(
+    {
+      userId: userId,
+    },
+    { enabled: !!userId }
+  );
+
+  const todaysWeight = (weightHistory: WeightHistory[]) => {
     const today = new Date();
     return weightHistory.find(
       (element) => element.created_at.getDate() == today.getDate()
     );
   };
 
-  if (userLoading || weightHistoryLoading) return <div>Loading...</div>;
+  const yesterdaysWeight = (weightHistory: WeightHistory[]) => {
+    const date = new Date();
+    date.setDate(date.getDate() - 1);
 
-  if (userError || weightHistoryError) return <div>An error has occurred</div>;
+    return weightHistory.find(
+      (element) => element.created_at.getDate() == date.getDate()
+    );
+  };
+
+  if (userLoading || weightHistoryLoading || mateLoading)
+    return <div>Loading...</div>;
+
+  if (userError || weightHistoryError || mateError)
+    return <div>An error has occurred</div>;
 
   return (
     <div>
-      <MatePickerModal />
-      {!isTodaysWeightHistoryCompleted(weightHistoryData) && (
-        <UserWeightModalForm />
+      {!mateData && <MatePickerModal />}
+      {!todaysWeight(weightHistoryData) && mateData && (
+        <UserWeightModalForm
+          usersObjective={userData?.objective}
+          matesLevel={mateData?.level}
+          yesterdaysWeight={yesterdaysWeight(weightHistoryData)}}
+        />
       )}
       <div className="flex justify-between p-2 font-semibold">
         <div>{userData?.name}</div>
@@ -53,7 +79,9 @@ const Home: NextPage = () => {
       <div className="mt-24 flex justify-center">
         <Image
           className="rounded-full"
-          src="/images/green/stage1.png"
+          src={`/images/${mateData?.color.toLowerCase() || ""}/stage${
+            mateData?.level || 1
+          }.png`}
           alt="mate"
           width={360}
           height={360}

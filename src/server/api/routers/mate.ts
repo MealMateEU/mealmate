@@ -1,35 +1,35 @@
 import { z } from "zod";
-import { TRPCError } from "@trpc/server";
 import {
   createTRPCRouter,
   publicProcedure,
   protectedProcedure,
 } from "~/server/api/trpc";
+import { Color } from "@prisma/client";
 
 export const mateRouter = createTRPCRouter({
-  getById: publicProcedure
+  getMateByUserId: publicProcedure
     .input(z.object({ userId: z.string() }))
     .query(async ({ ctx, input }) => {
       const mate = await ctx.prisma.mate.findUnique({
         where: { userId: input.userId },
       });
 
-      if (!mate) throw new TRPCError({ code: "NOT_FOUND" });
       return mate;
     }),
 
   create: protectedProcedure
-    .input(z.object({ weight: z.number() }))
+    .input(z.object({ color: z.nativeEnum(Color) }))
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.session.user.id;
 
-      const weightHistory = await ctx.prisma.weightHistory.create({
+      const mate = await ctx.prisma.mate.create({
         data: {
           userId,
-          weight: input.weight,
+          level: 1,
+          color: input.color,
         },
       });
 
-      return weightHistory;
+      return mate;
     }),
 });

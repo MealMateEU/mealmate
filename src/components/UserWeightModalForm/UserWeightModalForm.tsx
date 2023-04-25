@@ -4,16 +4,31 @@ import { useForm } from "react-hook-form";
 import Input from "~/components/common/Input";
 import { WeightHistory, WeightHistoryENUM } from "~/types/weightHistory.type";
 import { api, type RouterInputs } from "~/utils/api";
+import { lose_fat, gain_muscle, maintain_weight } from "~/utils/levelManager";
+import { type Objective } from "@prisma/client";
+import type { WeightHistory as WeightHistoryType } from "@prisma/client";
 
-const UserWeightModalForm: React.FC = () => {
+interface IUserWeightModalFormProps {
+  usersObjective: Objective;
+  matesLevel: number;
+  yesterdaysWeight: WeightHistoryType;
+}
+
+const UserWeightModalForm: React.FC<IUserWeightModalFormProps> = (
+  props: IUserWeightModalFormProps
+) => {
   const session = useSession();
-  const { refetch } = api.weightHistory.getWeightHistoryByUserId.useQuery(
-    { userId: session.data?.user.id || "" },
-    { enabled: false }
-  );
+  const ctx = api.useContext();
+  const obectives = [lose_fat, gain_muscle, maintain_weight];
+
   const { mutate: addWeightHistory } = api.weightHistory.create.useMutation({
     onSuccess: async () => {
-      await refetch();
+      await ctx.weightHistory.getWeightHistoryByUserId.invalidate({
+        userId: session.data?.user.id || "",
+      });
+      await ctx.mate.getMateByUserId.invalidate({
+        userId: session.data?.user.id || "",
+      });
     },
   });
 

@@ -7,7 +7,6 @@ import {
 import { UserInfos } from "~/types/userInfos.type";
 
 export const userRouter = createTRPCRouter({
-
   getUserInfos: protectedProcedure.query(async ({ ctx }) => {
     const allDatas = await ctx.prisma.user.findMany();
 

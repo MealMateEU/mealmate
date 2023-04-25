@@ -30,7 +30,6 @@ export const weightHistoryRouter = createTRPCRouter({
         data: {
           userId,
           weight: input.weight,
-
         },
       });
 

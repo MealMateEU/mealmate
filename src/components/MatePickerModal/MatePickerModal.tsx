@@ -1,19 +1,46 @@
 import { Color } from "@prisma/client";
 import Image from "next/image";
 import { useState } from "react";
+import { useSession } from "next-auth/react";
+import { Modal, Button } from "react-daisyui";
+import { api } from "~/utils/api";
 
 const colors = Object.values(Color)
   .filter((c) => c !== "UNSET" && c !== "EASTEREGG")
-  .map((c) => c.toLocaleLowerCase());
+  .map((c) => c.toLocaleLowerCase() as keyof typeof Color);
 
 const MatePickerModal: React.FC = () => {
+  const [visible, setVisible] = useState<boolean>(true);
+
+  const session = useSession();
+  const ctx = api.useContext();
+
+  const { mutate: chooseMate } = api.mate.create.useMutation({
+    onSuccess: async () => {
+      await ctx.mate.getMateByUserId.invalidate({
+        userId: session.data?.user.id || "",
+      });
+      setVisible(false);
+    },
+  });
+
+  const handleChooseMate = () => {
+    const color = colors[idx]?.toUpperCase() as keyof typeof Color;
+    if (color === undefined) {
+      return;
+    }
+
+    chooseMate({ color });
+  };
+
   const [idx, setIdx] = useState(0);
+
   return (
-    <div>
-      <input type="checkbox" id="my-modal" className="modal-toggle" checked />
-      <div className="modal">
-        <div className="modal-box">
-          <h3 className="text-lg font-bold">Choose your mate</h3>
+    <div className="font-sans">
+      <Modal open={visible}>
+        <Modal.Header className="font-bold">Choose your mate</Modal.Header>
+
+        <Modal.Body>
           <div className="carousel mt-4 w-full">
             {colors.map((color, index) => (
               <div
@@ -53,13 +80,12 @@ const MatePickerModal: React.FC = () => {
               </div>
             ))}
           </div>
-          <div className="modal-action">
-            <label htmlFor="my-modal" className="btn">
-              Submit
-            </label>
-          </div>
-        </div>
-      </div>
+        </Modal.Body>
+
+        <Modal.Actions>
+          <Button onClick={handleChooseMate}>Choose!</Button>
+        </Modal.Actions>
+      </Modal>
     </div>
   );
 };
