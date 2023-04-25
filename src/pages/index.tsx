@@ -1,54 +1,63 @@
 import { type NextPage } from "next";
 import Image from "next/image";
-import { Button } from "~/components/common/Button";
+import { api } from "~/utils/api";
+import MatePickerModal from "~/components/MatePickerModal/MatePickerModal";
+import UserWeightModalForm from "~/components/UserWeightModalForm/UserWeightModalForm";
+import type { WeightHistory } from "@prisma/client";
 
 const Home: NextPage = () => {
+  const {
+    data: userData,
+    isLoading: userLoading,
+    isError: userError,
+  } = api.user.getUserInfos.useQuery();
+
+  const userId = userData?.id;
+
+  const {
+    data: weightHistoryData,
+    isLoading: weightHistoryLoading,
+    isError: weightHistoryError,
+  } = api.weightHistory.getWeightHistoryByUserId.useQuery(
+    {
+      userId: userId || "",
+    },
+    { enabled: !!userId }
+  );
+
+  const isTodaysWeightHistoryCompleted = (weightHistory: WeightHistory[]) => {
+    const today = new Date();
+    return weightHistory.find(
+      (element) => element.created_at.getDate() == today.getDate()
+    );
+  };
+
+  if (userLoading || weightHistoryLoading) return <div>Loading...</div>;
+
+  if (userError || weightHistoryError) return <div>An error has occurred</div>;
+
   return (
     <div>
-      <div className="flex justify-between font-semibold p-2">
-        <div>Clément</div>
+      <MatePickerModal />
+      {!isTodaysWeightHistoryCompleted(weightHistoryData) && (
+        <UserWeightModalForm />
+      )}
+      <div className="flex justify-between p-2 font-semibold">
+        <div>{userData?.name}</div>
         <div>
-          <div>22 ans</div>
-          <div>173 cm</div>
-          <div>67 kg</div>
+          <div>{userData?.age} ans</div>
+          <div>{userData?.heightInCentimeters} cm</div>
+          <div>{weightHistoryData[0]?.weight} kg</div>
         </div>
       </div>
       <div className="mt-24 flex justify-center">
-        <Image className="rounded-full" src="/images/image.png" alt='mate image' width={360} height={360} />
-      </div>
-      <div className="btm-nav">
-        <button>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-            />
-          </svg>
-        </button>
-        <button className="active">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-        </button>
+        <Image
+          className="rounded-full"
+          src="/images/green/stage1.png"
+          alt="mate"
+          width={360}
+          height={360}
+        />
       </div>
     </div>
   );

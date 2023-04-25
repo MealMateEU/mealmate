@@ -1,12 +1,11 @@
 import React from "react";
 import { type UseFormRegister } from "react-hook-form";
-import { type UserInfosENUM, type UserInfosType } from "~/types/userInfos.type";
 
 interface IInputProps {
   spanValue: string;
   placeholder: string;
-  register: UseFormRegister<UserInfosType>;
-  name: UserInfosENUM;
+  register: UseFormRegister<any>;
+  name: string;
   type?: string;
   required?: boolean;
 }
