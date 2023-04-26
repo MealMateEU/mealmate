@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { type NextPage } from "next";
 import Image from "next/image";
 import { api } from "~/utils/api";
@@ -6,6 +7,8 @@ import UserWeightModalForm from "~/components/UserWeightModalForm/UserWeightModa
 import type { WeightHistory } from "@prisma/client";
 
 const Home: NextPage = () => {
+  const [toastVisible, setToastVisible] = useState(false);
+
   const {
     data: userData,
     isLoading: userLoading,
@@ -43,15 +46,6 @@ const Home: NextPage = () => {
     );
   };
 
-  const yesterdaysWeight = (weightHistory: WeightHistory[]) => {
-    const date = new Date();
-    date.setDate(date.getDate() - 1);
-
-    return weightHistory.find(
-      (element) => element.created_at.getDate() == date.getDate()
-    );
-  };
-
   if (userLoading || weightHistoryLoading || mateLoading)
     return <div>Loading...</div>;
 
@@ -60,12 +54,20 @@ const Home: NextPage = () => {
 
   return (
     <div>
+      {toastVisible && (
+        <div className="toast-end toast z-10">
+          <div className="alert">
+            <div>
+              <span>Congratulations, your mate has just evolved!</span>
+            </div>
+          </div>
+        </div>
+      )}
       {!mateData && <MatePickerModal />}
       {!todaysWeight(weightHistoryData) && mateData && (
         <UserWeightModalForm
-          usersObjective={userData?.objective}
-          matesLevel={mateData?.level}
-          yesterdaysWeight={yesterdaysWeight(weightHistoryData)}}
+          setToastVisible={setToastVisible}
+          weightHistoryData={weightHistoryData}
         />
       )}
       <div className="flex justify-between p-2 font-semibold">
@@ -76,17 +78,19 @@ const Home: NextPage = () => {
           <div>{weightHistoryData[0]?.weight} kg</div>
         </div>
       </div>
-      <div className="mt-24 flex justify-center">
-        <Image
-          className="rounded-full"
-          src={`/images/${mateData?.color.toLowerCase() || ""}/stage${
-            mateData?.level || 1
-          }.png`}
-          alt="mate"
-          width={360}
-          height={360}
-        />
-      </div>
+      {mateData && (
+        <div className="mt-24 flex justify-center">
+          <Image
+            className="rounded-full border-2 border-solid border-white"
+            src={`/images/${mateData?.color.toLowerCase() || ""}/stage${
+              mateData?.level || 1
+            }.png`}
+            alt="mate"
+            width={360}
+            height={360}
+          />
+        </div>
+      )}
     </div>
   );
 };

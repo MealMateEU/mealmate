@@ -5,6 +5,8 @@ import {
   protectedProcedure,
 } from "~/server/api/trpc";
 import { Color } from "@prisma/client";
+import { calculateNewLevel } from "~/utils/levelManager";
+import { TRPCError } from "@trpc/server";
 
 export const mateRouter = createTRPCRouter({
   getMateByUserId: publicProcedure
@@ -32,4 +34,47 @@ export const mateRouter = createTRPCRouter({
 
       return mate;
     }),
+
+  tryToUpdateLevelByUserId: protectedProcedure.mutation(async ({ ctx }) => {
+    const userId = ctx.session.user.id;
+    const infos = await ctx.prisma.user.findUnique({
+      where: { id: ctx.session.user.id },
+      select: {
+        objective: true,
+        mate: { select: { level: true } },
+      },
+    });
+    if (infos === null || infos.mate === null) {
+      throw new TRPCError({ code: "BAD_REQUEST" });
+    }
+    const history = await ctx.prisma.weightHistory.findMany({
+      where: {
+        userId,
+      },
+      select: {
+        weight: true,
+      },
+      orderBy: {
+        created_at: "desc",
+      },
+      take: 2,
+    });
+    console.table(history)
+    const newLevel = calculateNewLevel({
+      matesLevel: infos.mate.level,
+      usersObjective: infos.objective,
+      todaysWeight: history[0]?.weight,
+      yesterdaysWeight: history[1]?.weight,
+    });
+    const mate = await ctx.prisma.mate.update({
+      where: {
+        userId: userId,
+      },
+      data: {
+        level: newLevel,
+      },
+    });
+
+    return mate;
+  }),
 });

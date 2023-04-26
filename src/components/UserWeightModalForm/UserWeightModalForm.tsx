@@ -1,25 +1,37 @@
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import Input from "~/components/common/Input";
 import { WeightHistory, WeightHistoryENUM } from "~/types/weightHistory.type";
 import { api, type RouterInputs } from "~/utils/api";
-import { lose_fat, gain_muscle, maintain_weight } from "~/utils/levelManager";
-import { type Objective } from "@prisma/client";
+import { Modal, Button } from "react-daisyui";
 import type { WeightHistory as WeightHistoryType } from "@prisma/client";
 
-interface IUserWeightModalFormProps {
-  usersObjective: Objective;
-  matesLevel: number;
-  yesterdaysWeight: WeightHistoryType;
+interface IUserWeightModalProps {
+  setToastVisible: React.Dispatch<React.SetStateAction<boolean>>;
+  weightHistoryData: WeightHistoryType[];
 }
-
-const UserWeightModalForm: React.FC<IUserWeightModalFormProps> = (
-  props: IUserWeightModalFormProps
-) => {
+const UserWeightModalForm: React.FC<IUserWeightModalProps> = ({
+  setToastVisible,
+  weightHistoryData,
+}) => {
+  const [visible, setVisible] = useState<boolean>(true);
   const session = useSession();
   const ctx = api.useContext();
-  const obectives = [lose_fat, gain_muscle, maintain_weight];
+
+  const { mutateAsync: updateMateLevel } =
+    api.mate.tryToUpdateLevelByUserId.useMutation({
+      onSuccess: async () => {
+        await ctx.mate.getMateByUserId.invalidate({
+          userId: session.data?.user.id || "",
+        });
+        setToastVisible(true);
+        setTimeout(() => {
+          setToastVisible(false);
+        }, 3000);
+      },
+    });
 
   const { mutate: addWeightHistory } = api.weightHistory.create.useMutation({
     onSuccess: async () => {
@@ -29,6 +41,10 @@ const UserWeightModalForm: React.FC<IUserWeightModalFormProps> = (
       await ctx.mate.getMateByUserId.invalidate({
         userId: session.data?.user.id || "",
       });
+      if (weightHistoryData.length > 0) {
+        await updateMateLevel();
+      }
+      setVisible(false);
     },
   });
 
@@ -48,37 +64,38 @@ const UserWeightModalForm: React.FC<IUserWeightModalFormProps> = (
   };
 
   return (
-    <div>
-      <input type="checkbox" id="my-modal" className="modal-toggle" checked />
-      <div className="modal">
+    <div className="font-sans">
+      <Modal open={visible}>
+        <Modal.Header className="font-bold">
+          What is your weight today?
+        </Modal.Header>
         <form
           onSubmit={(e) => {
             e.preventDefault();
             void handleSubmit(onSubmit)(e);
           }}
-          className="modal-box"
         >
-          <h3 className="mb-4 text-lg font-bold">What is your weight today?</h3>
+          <Modal.Body>
+            <Input
+              type="number"
+              name={WeightHistoryENUM.weight}
+              spanValue="kg"
+              placeholder="Your weight"
+              register={register}
+              required
+            />
+            {errors.weight && (
+              <p className="text-red-500">{errors.weight.message}</p>
+            )}
+          </Modal.Body>
 
-          <Input
-            type="number"
-            name={WeightHistoryENUM.weight}
-            spanValue="kg"
-            placeholder="Your weight"
-            register={register}
-            required
-          />
-          {errors.weight && (
-            <p className="text-red-500">{errors.weight.message}</p>
-          )}
-
-          <div className="modal-action">
-            <button type="submit" className="btn" disabled={!weight}>
-              Submit
-            </button>
-          </div>
+          <Modal.Actions>
+            <Button type="submit" disabled={!weight}>
+              Choose!
+            </Button>
+          </Modal.Actions>
         </form>
-      </div>
+      </Modal>
     </div>
   );
 };

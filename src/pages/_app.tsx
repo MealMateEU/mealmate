@@ -16,7 +16,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
       <Head>
         <title>Mealmate</title>
       </Head>
-      <Theme dataTheme="valentine">
+      <Theme dataTheme="dark">
         <main className="flex h-screen justify-center">
           <div className="h-full w-full overflow-y-scroll md:max-w-2xl">
             <Component {...pageProps} />
