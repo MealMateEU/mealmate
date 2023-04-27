@@ -20,6 +20,14 @@ enum Objective {
     UNSET
 }
 
+enum Color {
+    BLUE
+    GREEN
+    RED
+    EASTEREGG
+    UNSET
+}
+
 // Necessary for Next auth
 model Account {
     id                String  @id @default(cuid())
@@ -59,7 +67,7 @@ model User {
     age                 Int             @default(0)
     objective           Objective       @default(UNSET)
     weightHistory       WeightHistory[]
-    mate                Mate[]
+    mate                Mate?
     BlackList           BlackList[]
 }
 
@@ -100,9 +108,10 @@ model WeightHistory {
 
 model Mate {
     id           String   @id @default(cuid())
-    userId       String
+    userId       String   @unique
     related_user User     @relation(fields: [userId], references: [id])
     level        Int
+    color        Color    @default(UNSET)
     created_at   DateTime @default(now())
     updated_at   DateTime @updatedAt
 }

@@ -1,5 +1,7 @@
 import { createTRPCRouter } from "~/server/api/trpc";
 import { userRouter } from "./routers/user";
+import { weightHistoryRouter } from "./routers/weightHistory";
+import { mateRouter } from "./routers/mate";
 import { recipesRouter } from "./routers/recipes";
 import { blackListRouter } from "./routers/blackList";
 
@@ -10,6 +12,8 @@ import { blackListRouter } from "./routers/blackList";
  */
 export const appRouter = createTRPCRouter({
   user: userRouter,
+  weightHistory: weightHistoryRouter,
+  mate: mateRouter,
   recipes: recipesRouter,
   blacklist: blackListRouter
 });
